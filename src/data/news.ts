@@ -38,7 +38,7 @@ export function newsQueryOptions() {
         content: row.content,
         image_url: row.image_url,
         created_at: new Date(row.created_at).toISOString(),
-        impact_score: row.impact_score ?? undefined,
+        impact_score: row.impact_score,
       }));
     },
     staleTime: 30_000,
