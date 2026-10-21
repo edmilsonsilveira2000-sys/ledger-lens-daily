@@ -31,9 +31,14 @@ export function newsQueryOptions() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []).map((row) => ({
-        ...row,
+        id: row.id,
+        title: row.title,
         category: row.category as Category,
+        excerpt: row.excerpt,
+        content: row.content,
+        image_url: row.image_url,
         created_at: new Date(row.created_at).toISOString(),
+        impact_score: row.impact_score ?? undefined,
       }));
     },
     staleTime: 30_000,
