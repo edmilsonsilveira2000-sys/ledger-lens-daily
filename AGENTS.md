@@ -8,4 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
-- News articles live in src/data/news.ts as the `news` table shape (id,title,category,excerpt,content,image_url,created_at); swap it for a real data source later without changing components.
+- Articles come from the `public.news` table, read only through `newsQueryOptions()` in src/data/news.ts; components must never hold or hard-code article content, so an automated feed can publish by inserting rows alone.

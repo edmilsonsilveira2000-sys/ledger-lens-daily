@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CATEGORIES, formatDate, impactOf, sortedNews } from "@/data/news";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { CATEGORIES, formatDate, impactOf, newsQueryOptions, sortedNews, topStory } from "@/data/news";
 import { ArticleCard, CategoryBadge, ImpactMeter, SiteFooter, SiteHeader } from "@/components/news-ui";
 
 export const Route = createFileRoute("/")({
@@ -13,12 +14,14 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(newsQueryOptions()),
   component: Home,
 });
 
 function Home() {
-  const all = sortedNews();
-  const hero = [...all].sort((a, b) => impactOf(b) - impactOf(a))[0]!;
+  const { data } = useSuspenseQuery(newsQueryOptions());
+  const all = sortedNews(data);
+  const hero = topStory(all);
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,25 +35,27 @@ function Home() {
       </nav>
 
       <main className="mx-auto max-w-7xl px-6">
-        <section className="grid gap-10 border-b border-border py-10 lg:grid-cols-5">
-          <Link to="/article/$id" params={{ id: hero.id }} className="group lg:col-span-3">
-            <img src={hero.image_url} alt={hero.title} width={1280} height={768} className="aspect-[16/10] w-full object-cover" />
-          </Link>
-          <div className="flex flex-col justify-center lg:col-span-2">
-            <span className="breaking-label">Breaking</span>
-            <div className="mt-4"><CategoryBadge category={hero.category} /></div>
-            <Link to="/article/$id" params={{ id: hero.id }}>
-              <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-foreground hover:text-emerald md:text-5xl">
-                {hero.title}
-              </h1>
+        {hero ? (
+          <section className="grid gap-10 border-b border-border py-10 lg:grid-cols-5">
+            <Link to="/article/$id" params={{ id: hero.id }} className="group lg:col-span-3">
+              <img src={hero.image_url} alt={hero.title} width={1280} height={768} className="aspect-[16/10] w-full object-cover" />
             </Link>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{hero.excerpt}</p>
-            <div className="mt-6 flex items-center gap-6">
-              <time className="text-sm text-muted-foreground">{formatDate(hero.created_at)}</time>
-              <ImpactMeter score={impactOf(hero)} />
+            <div className="flex flex-col justify-center lg:col-span-2">
+              <span className="breaking-label">Breaking</span>
+              <div className="mt-4"><CategoryBadge category={hero.category} /></div>
+              <Link to="/article/$id" params={{ id: hero.id }}>
+                <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-foreground hover:text-emerald md:text-5xl">
+                  {hero.title}
+                </h1>
+              </Link>
+              <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{hero.excerpt}</p>
+              <div className="mt-6 flex items-center gap-6">
+                <time className="text-sm text-muted-foreground">{formatDate(hero.created_at)}</time>
+                <ImpactMeter score={impactOf(hero)} />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {CATEGORIES.map((c) => {
           const items = all.filter((n) => n.category === c);
