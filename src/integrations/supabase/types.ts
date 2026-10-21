@@ -49,7 +49,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      posts_public_view: {
+        Row: {
+          category: string | null
+          content: string | null
+          created_at: string | null
+          excerpt: string | null
+          id: string | null
+          image_url: string | null
+          impact_score: number | null
+          title: string | null
+        }
+        Insert: {
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string | null
+          image_url?: string | null
+          impact_score?: number | null
+          title?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string | null
+          image_url?: string | null
+          impact_score?: number | null
+          title?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

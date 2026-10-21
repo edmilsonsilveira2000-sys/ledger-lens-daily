@@ -18,28 +18,30 @@ export interface News {
 
 /**
  * Single source of truth for every story on the site.
- * Reads the `news` table through the browser client, so Row Level Security
- * decides what a visitor may see — no hard-coded articles anywhere.
+ * Reads the `posts_public_view` database view through the browser client,
+ * so the database decides what a visitor may see — no hard-coded articles anywhere.
  */
 export function newsQueryOptions() {
   return queryOptions({
     queryKey: ["news"],
     queryFn: async (): Promise<News[]> => {
       const { data, error } = await supabase
-        .from("news")
+        .from("posts_public_view")
         .select("id,title,category,excerpt,content,image_url,created_at,impact_score")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []).map((row) => ({
-        id: row.id,
-        title: row.title,
-        category: row.category as Category,
-        excerpt: row.excerpt,
-        content: row.content,
-        image_url: row.image_url,
-        created_at: new Date(row.created_at).toISOString(),
-        impact_score: row.impact_score,
-      }));
+      return (data ?? [])
+        .filter((row) => row.id && row.title && row.category && row.excerpt && row.content && row.image_url && row.created_at)
+        .map((row) => ({
+          id: row.id!,
+          title: row.title!,
+          category: row.category as Category,
+          excerpt: row.excerpt!,
+          content: row.content!,
+          image_url: row.image_url!,
+          created_at: new Date(row.created_at!).toISOString(),
+          impact_score: row.impact_score,
+        }));
     },
     staleTime: 30_000,
   });
