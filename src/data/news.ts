@@ -18,15 +18,15 @@ export interface News {
 
 /**
  * Single source of truth for every story on the site.
- * Reads the `news` table through the browser client, so Row Level Security
- * decides what a visitor may see — no hard-coded articles anywhere.
+ * Reads the `posts_public_view` database view through the browser client,
+ * so the database decides what a visitor may see — no hard-coded articles anywhere.
  */
 export function newsQueryOptions() {
   return queryOptions({
     queryKey: ["news"],
     queryFn: async (): Promise<News[]> => {
       const { data, error } = await supabase
-        .from("news")
+        .from("posts_public_view")
         .select("id,title,category,excerpt,content,image_url,created_at,impact_score")
         .order("created_at", { ascending: false });
       if (error) throw error;
