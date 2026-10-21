@@ -13,7 +13,7 @@ export interface News {
   content: string; // HTML or Markdown
   image_url: string;
   created_at: string; // ISO timestamp
-  impact_score?: number; // 0-100, optional, derived if absent
+  impact_score?: number | null; // 0-100, optional, derived if absent
 }
 
 /**
