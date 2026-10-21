@@ -1,11 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { marked } from "marked";
-import { formatDate, getNews, impactOf, sortedNews } from "@/data/news";
+import { findNews, formatDate, impactOf, newsQueryOptions, sortedNews } from "@/data/news";
 import { AdSlot, CategoryBadge, ImpactMeter, SiteFooter, SiteHeader } from "@/components/news-ui";
 
 export const Route = createFileRoute("/article/$id")({
-  loader: ({ params }) => {
-    const article = getNews(params.id);
+  loader: async ({ params, context }) => {
+    const items = await context.queryClient.ensureQueryData(newsQueryOptions());
+    const article = findNews(items, params.id);
     if (!article) throw notFound();
     return { article };
   },
@@ -34,8 +36,9 @@ export const Route = createFileRoute("/article/$id")({
 
 function ArticlePage() {
   const { article } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(newsQueryOptions());
   const html = marked.parse(article.content, { async: false }) as string;
-  const others = sortedNews().filter((n) => n.id !== article.id);
+  const others = sortedNews(data).filter((n) => n.id !== article.id);
 
   return (
     <div className="min-h-screen bg-background">
