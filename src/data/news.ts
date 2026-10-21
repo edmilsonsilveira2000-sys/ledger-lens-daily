@@ -30,16 +30,18 @@ export function newsQueryOptions() {
         .select("id,title,category,excerpt,content,image_url,created_at,impact_score")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []).map((row) => ({
-        id: row.id,
-        title: row.title,
-        category: row.category as Category,
-        excerpt: row.excerpt,
-        content: row.content,
-        image_url: row.image_url,
-        created_at: new Date(row.created_at).toISOString(),
-        impact_score: row.impact_score,
-      }));
+      return (data ?? [])
+        .filter((row) => row.id && row.title && row.category && row.excerpt && row.content && row.image_url && row.created_at)
+        .map((row) => ({
+          id: row.id!,
+          title: row.title!,
+          category: row.category as Category,
+          excerpt: row.excerpt!,
+          content: row.content!,
+          image_url: row.image_url!,
+          created_at: new Date(row.created_at!).toISOString(),
+          impact_score: row.impact_score,
+        }));
     },
     staleTime: 30_000,
   });
