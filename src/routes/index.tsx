@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const all = sortedNews();
-  const hero = [...all].sort((a, b) => impactOf(b) - impactOf(a))[0];
+  const hero = [...all].sort((a, b) => impactOf(b) - impactOf(a))[0]!;
 
   return (
     <div className="min-h-screen bg-background">
