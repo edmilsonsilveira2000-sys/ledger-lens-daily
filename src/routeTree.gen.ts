@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as ApiPublicNewsRouteImport } from './routes/api/public/news'
 import { Route as ApiPublicJobsWriteNewsRouteImport } from './routes/api/public/jobs/write-news'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const ArticleIdRoute = ArticleIdRouteImport.update({
   id: '/article/$id',
   path: '/article/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicNewsRoute = ApiPublicNewsRouteImport.update({
@@ -38,12 +44,14 @@ const ApiPublicJobsWriteNewsRoute = ApiPublicJobsWriteNewsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/api/public/news': typeof ApiPublicNewsRoute
   '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/api/public/news': typeof ApiPublicNewsRoute
   '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
@@ -51,19 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/api/public/news': typeof ApiPublicNewsRoute
   '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/article/$id' | '/api/public/news' | '/api/public/jobs/write-news'
+    | '/'
+    | '/article/$id'
+    | '/category/$slug'
+    | '/api/public/news'
+    | '/api/public/jobs/write-news'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/article/$id' | '/api/public/news' | '/api/public/jobs/write-news'
+  to:
+    | '/'
+    | '/article/$id'
+    | '/category/$slug'
+    | '/api/public/news'
+    | '/api/public/jobs/write-news'
   id:
     | '__root__'
     | '/'
     | '/article/$id'
+    | '/category/$slug'
     | '/api/public/news'
     | '/api/public/jobs/write-news'
   fileRoutesById: FileRoutesById
@@ -71,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArticleIdRoute: typeof ArticleIdRoute
+  CategorySlugRoute: typeof CategorySlugRoute
   ApiPublicNewsRoute: typeof ApiPublicNewsRoute
   ApiPublicJobsWriteNewsRoute: typeof ApiPublicJobsWriteNewsRoute
 }
@@ -89,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/article/$id'
       fullPath: '/article/$id'
       preLoaderRoute: typeof ArticleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/news': {
@@ -111,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArticleIdRoute: ArticleIdRoute,
+  CategorySlugRoute: CategorySlugRoute,
   ApiPublicNewsRoute: ApiPublicNewsRoute,
   ApiPublicJobsWriteNewsRoute: ApiPublicJobsWriteNewsRoute,
 }
