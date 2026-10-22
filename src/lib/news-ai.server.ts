@@ -41,7 +41,7 @@ export async function runNewsWriter(signal?: AbortSignal): Promise<JobResult> {
     const { data: recent } = await supabaseAdmin.from("news").select("title,category,created_at").order("created_at", { ascending: false }).limit(40);
     const lastByCat = new Map<string, number>();
     for (const r of recent ?? []) if (!lastByCat.has(r.category)) lastByCat.set(r.category, +new Date(r.created_at));
-    const category: Category = [...CATEGORIES].sort((a, b) => (lastByCat.get(a) ?? 0) - (lastByCat.get(b) ?? 0))[0];
+    const category: Category = [...CATEGORIES].sort((a, b) => (lastByCat.get(a) ?? 0) - (lastByCat.get(b) ?? 0))[0]!;
     const avoid = (recent ?? []).slice(0, 15).map((r) => `- ${r.title}`).join("\n");
 
     const apiKey = process.env["LOVABLE_API_KEY"];
