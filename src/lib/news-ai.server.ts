@@ -66,7 +66,7 @@ ${avoid}`,
         },
       ],
       output: Output.object({ schema: storySchema }),
-      abortSignal: signal,
+      ...(signal ? { abortSignal: signal } : {}),
       providerOptions: {
         openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] },
       },
