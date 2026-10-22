@@ -47,6 +47,30 @@ export type Database = {
         }
         Relationships: []
       }
+      news_job_state: {
+        Row: {
+          id: string
+          last_error: string | null
+          last_run_at: string | null
+          locked_until: string | null
+          paused_reason: string | null
+        }
+        Insert: {
+          id: string
+          last_error?: string | null
+          last_run_at?: string | null
+          locked_until?: string | null
+          paused_reason?: string | null
+        }
+        Update: {
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          locked_until?: string | null
+          paused_reason?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       posts_public_view: {

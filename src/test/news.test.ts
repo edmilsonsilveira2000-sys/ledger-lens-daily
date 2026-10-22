@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { findNews, formatDate, impactOf, sortedNews, topStory, type News } from "@/data/news";
+import { CATEGORIES, categoryFromSlug, categorySlug, findNews, formatDate, impactOf, sortedNews, topStory, type News } from "@/data/news";
 
 const story = (over: Partial<News>): News => ({
   id: "x",
@@ -41,5 +41,14 @@ describe("news rules", () => {
 
   it("prints dates in US style, fixed to UTC", () => {
     expect(formatDate("2026-10-21T16:45:00Z")).toBe("Oct 21, 2026");
+  });
+
+  it("has exactly five sections, including Business", () => {
+    expect([...CATEGORIES].sort()).toEqual(["Business", "Crypto", "Global Economy", "Markets", "Regulations & Law"]);
+  });
+
+  it("maps every section to a page address and back", () => {
+    expect(categorySlug("Regulations & Law")).toBe("regulations-and-law");
+    for (const c of CATEGORIES) expect(categoryFromSlug(categorySlug(c))).toBe(c);
   });
 });

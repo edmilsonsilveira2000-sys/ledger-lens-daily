@@ -9,3 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 - Articles come from the `public.news` table, read only through `newsQueryOptions()` in src/data/news.ts; components must never hold or hard-code article content, so an automated feed can publish by inserting rows alone.
+- Automated publishing writes to `public.news` only from server routes under src/routes/api/public/ (bearer-token ingest at /api/public/news, cron-authenticated AI writer at /api/public/jobs/write-news); the AI writer is single-flight and pausable via `public.news_job_state` so failures never loop or overspend.

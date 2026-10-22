@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as ApiPublicNewsRouteImport } from './routes/api/public/news'
+import { Route as ApiPublicJobsWriteNewsRouteImport } from './routes/api/public/jobs/write-news'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +25,74 @@ const ArticleIdRoute = ArticleIdRouteImport.update({
   path: '/article/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicNewsRoute = ApiPublicNewsRouteImport.update({
+  id: '/api/public/news',
+  path: '/api/public/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsWriteNewsRoute = ApiPublicJobsWriteNewsRouteImport.update({
+  id: '/api/public/jobs/write-news',
+  path: '/api/public/jobs/write-news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/api/public/news': typeof ApiPublicNewsRoute
+  '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/api/public/news': typeof ApiPublicNewsRoute
+  '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/api/public/news': typeof ApiPublicNewsRoute
+  '/api/public/jobs/write-news': typeof ApiPublicJobsWriteNewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/article/$id'
+  fullPaths:
+    | '/'
+    | '/article/$id'
+    | '/category/$slug'
+    | '/api/public/news'
+    | '/api/public/jobs/write-news'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/article/$id'
-  id: '__root__' | '/' | '/article/$id'
+  to:
+    | '/'
+    | '/article/$id'
+    | '/category/$slug'
+    | '/api/public/news'
+    | '/api/public/jobs/write-news'
+  id:
+    | '__root__'
+    | '/'
+    | '/article/$id'
+    | '/category/$slug'
+    | '/api/public/news'
+    | '/api/public/jobs/write-news'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArticleIdRoute: typeof ArticleIdRoute
+  CategorySlugRoute: typeof CategorySlugRoute
+  ApiPublicNewsRoute: typeof ApiPublicNewsRoute
+  ApiPublicJobsWriteNewsRoute: typeof ApiPublicJobsWriteNewsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +111,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/news': {
+      id: '/api/public/news'
+      path: '/api/public/news'
+      fullPath: '/api/public/news'
+      preLoaderRoute: typeof ApiPublicNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/write-news': {
+      id: '/api/public/jobs/write-news'
+      path: '/api/public/jobs/write-news'
+      fullPath: '/api/public/jobs/write-news'
+      preLoaderRoute: typeof ApiPublicJobsWriteNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArticleIdRoute: ArticleIdRoute,
+  CategorySlugRoute: CategorySlugRoute,
+  ApiPublicNewsRoute: ApiPublicNewsRoute,
+  ApiPublicJobsWriteNewsRoute: ApiPublicJobsWriteNewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
