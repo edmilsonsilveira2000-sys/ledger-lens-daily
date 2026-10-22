@@ -15,6 +15,13 @@
       "when": 1792618341335,
       "tag": "0001_create_posts_public_view",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792647217828,
+      "tag": "0002_add_business_and_ai_job_state",
+      "breakpoints": true
     }
   ]
 }
