@@ -1,8 +1,21 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const CATEGORIES = ["Markets", "Crypto", "Global Economy", "Regulations & Law"] as const;
+export const CATEGORIES = ["Markets", "Business", "Crypto", "Global Economy", "Regulations & Law"] as const;
 export type Category = (typeof CATEGORIES)[number];
+
+export const categorySlug = (c: Category) => c.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-");
+export const categoryFromSlug = (slug: string) => CATEGORIES.find((c) => categorySlug(c) === slug);
+
+/** Fallback cover image per section, used when an automated story arrives without one. */
+export const defaultImage = (c: Category) =>
+  ({
+    Markets: "/news/markets.jpg",
+    Business: "/news/business.jpg",
+    Crypto: "/news/crypto.jpg",
+    "Global Economy": "/news/economy.jpg",
+    "Regulations & Law": "/news/law.jpg",
+  })[c];
 
 /** Row shape of the `news` table — matches incoming automated integrations. */
 export interface News {
@@ -18,8 +31,7 @@ export interface News {
 
 /**
  * Single source of truth for every story on the site.
- * Reads the `posts_public_view` database view through the browser client,
- * so the database decides what a visitor may see — no hard-coded articles anywhere.
+ * Reads the `posts_public_view` database view, so the database decides what a visitor may see.
  */
 export function newsQueryOptions() {
   return queryOptions({
@@ -28,7 +40,8 @@ export function newsQueryOptions() {
       const { data, error } = await supabase
         .from("posts_public_view")
         .select("id,title,category,excerpt,content,image_url,created_at,impact_score")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(200);
       if (error) throw error;
       return (data ?? [])
         .filter((row) => row.id && row.title && row.category && row.excerpt && row.content && row.image_url && row.created_at)
@@ -57,6 +70,15 @@ export const topStory = (items: News[]) =>
 
 /** Stories without an explicit score sit in the middle of the scale. */
 export const impactOf = (n: News) => n.impact_score ?? 50;
+
+export const mostImpactful = (items: News[], count: number) =>
+  [...items].sort((a, b) => impactOf(b) - impactOf(a)).slice(0, count);
+
+export const readingMinutes = (content: string) =>
+  Math.max(1, Math.round(content.split(/\s+/).length / 220));
+
+export const slugify = (title: string) =>
+  title.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
 export const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
